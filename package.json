@@ -1,0 +1,39 @@
+{
+  "name": "invagers-must-die",
+  "version": "0.0.1",
+  "author": "catato<catato.developer@gmail.com>",
+  "description": "Scroller shooter",
+  "main": "./index.html",
+  "scripts": {
+    "npm-reset": "rm -rf node_modules && npm cache verify && npm i",
+    "git-reset": "git reset HEAD --hard && git clean -fd && git fetch --all --tags --prune && git pull",
+    "start": "webpack serve",
+    "build": "webpack"
+  },
+  "keywords": [
+    "pixijs",
+    "playground",
+    "basic",
+    "webpack",
+    "typescript",
+    "seed"
+  ],
+  "dependencies": {
+    "pixi.js": "5.3.7"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.20",
+    "@types/pixi.js": "^5.0.0",
+    "awesome-typescript-loader": "5.2.1",
+    "clean-webpack-plugin": "3.0.0",
+    "copy-webpack-plugin": "7.0.0",
+    "file-loader": "6.2.0",
+    "html-webpack-plugin": "4.5.1",
+    "tsconfig-paths-webpack-plugin": "3.3.0",
+    "tslint": "6.1.3",
+    "typescript": "^4.1.3",
+    "webpack": "5.11.1",
+    "webpack-cli": "4.3.1",
+    "webpack-dev-server": "3.11.1"
+  }
+}
