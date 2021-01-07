@@ -9,13 +9,4 @@ Prerequisite:
 * run `npm i` before first start
 
 Run (dev): `npm start` then browse http://localhost:4200/ with Firefox or Chrome
-Build (prod): `npm run build` then use freshly generated "dist" 
-## More infos
-
-Current version: Release v5.0.1
-
-Last NPM full update: 2018-03-27
-
-Author: Loïc TRUCHOT
-
-Licences: [CC-BY-NC-4.0](https://creativecommons.org/licenses/by-nc/4.0/): you can use/copy/modify any code but only without commercial intentions.
+Build (prod): `npm run build` then use freshly generated "dist"
