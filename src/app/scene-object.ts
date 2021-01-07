@@ -2,11 +2,11 @@ import { IRange } from '@models/range.interface';
 import { ISceneObjectOptions } from '@models/scene-object-options.interface';
 import { Container, DisplayObject } from 'pixi.js';
 
-export class SceneObject {
+export abstract class SceneObject<T extends DisplayObject> {
   public vx = 0;
   public vy = 0;
 
-  private obj: DisplayObject;
+  public obj: T;
   private xRestrictions: IRange;
   private yRestrictions: IRange;
 
@@ -41,6 +41,8 @@ export class SceneObject {
   }
 
   constructor(options: ISceneObjectOptions) {
+    this.obj = this.getSceneObject(options);
+
     if (options.xRestrictions) {
       this.xRestrictions = options.xRestrictions;
     }
@@ -49,6 +51,8 @@ export class SceneObject {
       this.yRestrictions = options.yRestriction;
     }
   }
+
+  public abstract getSceneObject(options: ISceneObjectOptions): T;
 
   public addToStage(stage: Container): void {
     stage.addChild(this.obj);

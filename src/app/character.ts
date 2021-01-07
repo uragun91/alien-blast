@@ -2,16 +2,18 @@ import { ISceneObjectOptions } from '@models/scene-object-options.interface';
 import { Sprite } from 'pixi.js';
 import { SceneObject } from './scene-object';
 
-export class Character extends SceneObject {
+export class Character extends SceneObject<Sprite> {
   public isShooting: boolean;
-  private sprite: Sprite;
 
   constructor(options: ISceneObjectOptions) {
     super(options);
-    this.sprite = new Sprite(options.texture);
-    this.sprite.anchor.y = 0.5;
-    this.sprite.anchor.x = 0.5;
-    this.sprite.width = 50;
-    this.sprite.height = 50;
+    this.obj.anchor.y = 0.5;
+    this.obj.anchor.x = 0.5;
+    this.obj.width = 50;
+    this.obj.height = 50;
+  }
+
+  public getSceneObject(options: ISceneObjectOptions): Sprite {
+    return new Sprite(options.texture);
   }
 }
