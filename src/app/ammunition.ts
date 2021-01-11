@@ -1,16 +1,11 @@
-import { ISceneObjectOptions } from '@models/scene-object-options.interface';
-import { Sprite, Texture } from 'pixi.js';
+import { DisplayObject, Texture } from 'pixi.js';
 import { SceneObject } from './scene-object';
 
-abstract class Ammunition extends SceneObject<Sprite> {
+export abstract class Ammunition<T extends DisplayObject> extends SceneObject<T> {
   constructor(
-    texture: Texture,
-    public damage: number
+    public damage: number,
+    texture?: Texture
   ) {
     super({ texture });
-  }
-
-  public getSceneObject(options: ISceneObjectOptions): Sprite {
-    return new Sprite(options.texture);
   }
 }

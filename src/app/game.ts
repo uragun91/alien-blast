@@ -1,9 +1,10 @@
 import { Character } from '@app/character';
 import { KeyListener } from '@app/key-listener';
 import { ISceneObjectOptions } from '@models/scene-object-options.interface';
-import { Application, Loader, TilingSprite } from 'pixi.js';
+import { Collisions } from 'detect-collisions';
+import { Application, DisplayObject, Loader, TilingSprite } from 'pixi.js';
+import { Ammunition } from './ammunition';
 
-const PROTOGONIST_HORIZONTAL_VELOCITY = 7;
 const BACKGROUND_VELOCITY = 2;
 
 export class Game {
@@ -12,13 +13,22 @@ export class Game {
 
   private protagonist: Character;
   private space: TilingSprite;
+  private protogonistAmmos: Set<Ammunition<any>> = new Set();
+
+  private control = new KeyListener('Control');
+  private left = new KeyListener('ArrowLeft');
+  private right = new KeyListener('ArrowRight');
+
+  private steps: number = 0;
+
+  private collisionSystem = new Collisions();
 
   constructor() {
     // instantiate app
     this.app = new Application({
       width: 500,
       height: 800,
-      backgroundColor: 0x000000 // light blue
+      backgroundColor: 0x94bdff
     });
 
     this.app.ticker.stop();
@@ -51,56 +61,82 @@ export class Game {
     this.space.scale.x = this.app.view.width / this.space.width;
     this.space.tilePosition.x = 0;
     this.space.tilePosition.y = 0;
-    this.app.stage.addChild(this.space)
+    // this.app.stage.addChild(this.space)
 
     // append hero
-    const options: ISceneObjectOptions = {
+    const protogonistOptions: ISceneObjectOptions = {
       texture: this.loader.resources['proto'].texture,
       xRestrictions: {
         from: 0,
         to: this.app.view.width
       }
     }
-    this.protagonist = new Character(options);
+    this.protagonist = new Character(protogonistOptions);
     this.protagonist.addToStage(this.app.stage);
     this.protagonist.x = this.app.view.width / 2;
     this.protagonist.y = this.app.view.height - 25;
 
-    const left = new KeyListener('ArrowLeft');
-    const right = new KeyListener('ArrowRight');
-    // const control = new KeyListener('Control');
-
-    left.press = () => {
-      if (!right.isDown) {
-        this.protagonist.vx = -PROTOGONIST_HORIZONTAL_VELOCITY;
+    this.left.press = () => {
+      if (!this.right.isDown) {
+        this.protagonist.moveLeft();
       }
     }
-    left.release = () => {
-      if (!right.isDown) {
-        this.protagonist.vx = 0;
+    this.left.release = () => {
+      if (!this.right.isDown) {
+        this.protagonist.stopMoving();
       } else {
-        this.protagonist.vx = PROTOGONIST_HORIZONTAL_VELOCITY;
+        this.protagonist.moveRight();
       }
     }
 
-    right.press = () => {
-      if (!left.isDown) {
-        this.protagonist.vx = PROTOGONIST_HORIZONTAL_VELOCITY;
+    this.right.press = () => {
+      if (!this.left.isDown) {
+        this.protagonist.moveRight();
       }
     }
-    right.release = () => {
-      if (!left.isDown) {
-        this.protagonist.vx = 0;
+    this.right.release = () => {
+      if (!this.left.isDown) {
+        this.protagonist.stopMoving();
       } else {
-        this.protagonist.vx = -PROTOGONIST_HORIZONTAL_VELOCITY;
+        this.protagonist.moveLeft();
       }
     }
 
-    this.app.ticker.add((delta: number) => this.gameLoop());
+    this.control.press = () => {
+      this.steps = 0;
+    }
+
+    this.control.release = () => {
+      this.steps = 0;
+    }
+
+    this.app.ticker.add((delta: number) => this.gameLoop(delta));
   }
 
-  private gameLoop(): void {
+  private gameLoop(delta: number): void {
     this.protagonist.x += this.protagonist.vx;
     this.space.tilePosition.y += BACKGROUND_VELOCITY;
+    this.protogonistAmmos.forEach((ammo: Ammunition<any>) => {
+      if (ammo.y === 0) {
+        this.protogonistAmmos.delete(ammo);
+        (ammo.obj as DisplayObject).destroy();
+      } else {
+        ammo.y += ammo.vy;
+        ammo.x += ammo.vx;
+      }
+    })
+
+    if (this.control.isDown) {
+      // todo: speed should be defined in ammo object
+      if (this.steps % 10 === 0) { // shoot each 10 ticks
+        const newShootAmmos: Ammunition<any>[] = this.protagonist.shoot();
+        newShootAmmos.forEach((ammo: Ammunition<any>) => {
+          this.protogonistAmmos.add(ammo);
+          ammo.addToStage(this.app.stage);
+        });
+      }
+
+      this.steps += 1;
+    }
   }
 }

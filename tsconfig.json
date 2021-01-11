@@ -21,6 +21,7 @@
       "@app/*": ["app/*"],
       "@models/*": ["models/*"],
       "@assets/*": ["assets/*"]
-    }
-  }
+    },
+  },
+  "include": ["src"]
 }

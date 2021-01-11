@@ -19,6 +19,7 @@
     "seed"
   ],
   "dependencies": {
+    "detect-collisions": "^2.5.2",
     "pixi.js": "5.3.7"
   },
   "devDependencies": {
